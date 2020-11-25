@@ -4,8 +4,10 @@ import pdfminer.high_level
 res = '/Users/ian/Documents/Personal/Employment/Resumes/Resume 10:7:2020.pdf'
 
 def stripSymbols(word):#remove symbols from ends of words
-    regexPattern = re.compile(r'^[\W_]+')#add end strip regex
-    newWord = regexPattern.sub('', word)
+    regexPattern = re.compile(r'^[\W_]+') 
+    newWord = regexPattern.sub('', word) #remove symbols from beginning
+    regexPattern = re.compile(r'[\W_]+$') 
+    newWord = regexPattern.sub('', newWord) #remove symbols from end
     return newWord
 
 def digestResume(resume): #resume is a pdf file (as str)
@@ -14,22 +16,29 @@ def digestResume(resume): #resume is a pdf file (as str)
     textLst = text.split() #parse resume into list
     words = {} #dictionary where word count will be stored
 
-    #count number of instances of each word
-    for word in textLst:
-        if word.strip() in words.keys():
-            words[word] += 1
-        else:
-            words[word] = 1
-    
-    #strip symbols from the ends of words (such as parentheses)
+    #count number of instances of each word and strip symbols off of them
+    #make symbol-only words empty
     newWords = {} #new dictionary to hold updated keys
-    for word, number in words.items():
-        newWords[stripSymbols(word)] = number
+    for word in textLst:
+        if stripSymbols(word) in newWords.keys():
+            newWords[stripSymbols(word)] += 1
+        else:
+            newWords[stripSymbols(word)] = 1
     words = newWords
 
-    #remove all non-alphabetical words
-    words = {word:number for word, number in words.items()\
-         if word[0].isalpha() and word[len(word) - 1].isalpha()}#fix this
+   #make all number-symbol words empty
+    newWords = {} #reset newWords
+    numRegex = re.compile(r'^[\W_\d]+$') #selects all number-symbol words
+    for word in words.keys():
+       newWords[numRegex.sub('', word)] = words[word]
+    words = newWords
+
+    #remove all short/empty words from dictionary
+    newWords = {} #reset newWords
+    for word in words.keys():
+        if len(word) >= 3:
+            newWords[word] = words[word]
+    words = newWords
 
     return words
 
