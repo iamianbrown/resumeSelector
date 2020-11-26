@@ -20,9 +20,8 @@ def stripSymbols(word):#remove symbols from ends of words
 #could use plain text or json file (json can be read by anything)
 #could use library that finds similar words
 
-#digest job description
-def digestResume(resume): #resume is a pdf file (as str)
-    text = pdfminer.high_level.extract_text(resume)
+#digest a text input into a keyword dictionary
+def digest(text): #resume is a pdf file (as str)
     text = text.lower() #make search case insensitive
     textLst = text.split() #parse resume into list
     words = {} #dictionary where word count will be stored
@@ -48,13 +47,28 @@ def digestResume(resume): #resume is a pdf file (as str)
     commonWords = set(['of','in','to','for','with','on','at','from','by','about','as','into','like','through',\
         'after','over','between','out','against','during','without','before','under','around','among','as','if',\
             'than','that','though','so','and','or','nor','but','yet', 'may', 'the','how','then','my','while','good',\
-                 'st','ave','blvd','way','not','an','within'])
+                 'st','ave','blvd','way','not','an','within','up'])
     newWords = {} #reset newWords
     for word in words.keys():
         if len(word) >= 2 and word not in commonWords:
             newWords[word] = words[word]
     words = newWords
-    #set data structure for non-pertitent words
     return words
 
-pprint.pprint(digestResume(res))
+#uploads a new resume into database
+def uploadResume(resumePDF):
+    resumeWords = digest(pdfminer.high_level.extract_text(resumePDF))
+    #pickle resumeWords and store (should be stored in one file as a dictionary
+    #with keynames the same as resume filenames)
+
+#finds the resume with the highest number of keyword hits
+def findBestResume(description):
+    descriptionWords = digest(description)
+    scores = {} #dictionary to keep track of how many same word instances there are for each resume
+    for resume in resumeList:
+        scores[resume] = 0
+        for word in descriptionWords:
+            if word in resume:
+                scores[resume] += 1
+    #return resume with highest score
+pprint.pprint(digest(res))
