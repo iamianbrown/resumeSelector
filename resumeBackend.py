@@ -10,6 +10,17 @@ def stripSymbols(word):#remove symbols from ends of words
     newWord = regexPattern.sub('', newWord) #remove symbols from end
     return newWord
 
+
+#serialization
+#library pickle (not 3rd party) can handle dicts
+#numpy library numeric calculation library for python—good at arrays (can add, do cool stuff element by element, find big stuff)
+#has own way to store things in files
+#could use array indices to represent each word
+#(fix order of words)
+#could use plain text or json file (json can be read by anything)
+#could use library that finds similar words
+
+#digest job description
 def digestResume(resume): #resume is a pdf file (as str)
     text = pdfminer.high_level.extract_text(resume)
     text = text.lower() #make search case insensitive
@@ -36,10 +47,10 @@ def digestResume(resume): #resume is a pdf file (as str)
     #remove all short/empty words from dictionary
     newWords = {} #reset newWords
     for word in words.keys():
-        if len(word) >= 3:
+        if len(word) >= 2:
             newWords[word] = words[word]
     words = newWords
-
+    #set data structure for non-pertitent words
     return words
 
 print(digestResume(res))
