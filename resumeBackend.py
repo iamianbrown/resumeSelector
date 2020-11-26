@@ -1,7 +1,7 @@
 import re
 import pdfminer.high_level
-
-res = '/Users/ian/Documents/Personal/Employment/Resumes/Resume 10:7:2020.pdf'
+import pprint
+res = '/Users/ian/Documents/Personal/Employment/Resumes/Resume 11:20:2020.pdf'
 
 def stripSymbols(word):#remove symbols from ends of words
     regexPattern = re.compile(r'^[\W_]+') 
@@ -44,13 +44,17 @@ def digestResume(resume): #resume is a pdf file (as str)
        newWords[numRegex.sub('', word)] = words[word]
     words = newWords
 
-    #remove all short/empty words from dictionary
+    #remove all short/empty words and propositions from dictionary
+    commonWords = set(['of','in','to','for','with','on','at','from','by','about','as','into','like','through',\
+        'after','over','between','out','against','during','without','before','under','around','among','as','if',\
+            'than','that','though','so','and','or','nor','but','yet', 'may', 'the','how','then','my','while','good',\
+                 'st','ave','blvd','way','not','an','within'])
     newWords = {} #reset newWords
     for word in words.keys():
-        if len(word) >= 2:
+        if len(word) >= 2 and word not in commonWords:
             newWords[word] = words[word]
     words = newWords
     #set data structure for non-pertitent words
     return words
 
-print(digestResume(res))
+pprint.pprint(digestResume(res))
