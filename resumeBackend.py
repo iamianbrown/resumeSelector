@@ -1,6 +1,7 @@
 import re
 import pdfminer.high_level
 import pprint
+from datetime import date
 res = '/Users/ian/Documents/Personal/Employment/Resumes/Resume 11:20:2020.pdf'
 
 def stripSymbols(word):#remove symbols from ends of words
@@ -55,13 +56,25 @@ def digest(text): #resume is a pdf file (as str)
     words = newWords
     return words
 
-#uploads a new resume into database
-def uploadResume(resumePDF):
+#adds a new resume into database
+def addResume(resumePDF):
     resumeWords = digest(pdfminer.high_level.extract_text(resumePDF))
+    nameRegex = re.compile(r'([^\/^]+)(.pdf)') #gets everything after last / upto file type (does not include .pdf)
+    resumeName = nameRegex.search(resumePDF)
+    name = resumeName.group(0)
+    #resumes = open(r'digestedResumes.txt', 'r')
+    #resumeText = resumes.read()
+    #searchRegex = re.compile('Name:')
+    resumeEntry = {'Name':name, 'Date':date.today(), 'Content':str(resumeWords)}
+    resumes = open(r'digestedResumes.txt', 'a')
+    resumes.write(str(resumeEntry) + '\n')
+    resumes.close()
+
     #pickle resumeWords and store (should be stored in one file as a dictionary
     #with keynames the same as resume filenames)
 
 #finds the resume with the highest number of keyword hits
+'''
 def findBestResume(description):
     descriptionWords = digest(description)
     scores = {} #dictionary to keep track of how many same word instances there are for each resume
@@ -71,4 +84,5 @@ def findBestResume(description):
             if word in resume:
                 scores[resume] += 1
     #return resume with highest score
-pprint.pprint(digest(res))
+'''
+addResume(res)
