@@ -61,10 +61,11 @@ def addResume(resumePDF):
     resumeWords = digest(pdfminer.high_level.extract_text(resumePDF))
     nameRegex = re.compile(r'([^\/^]+)(.pdf)') #gets everything after last / upto file type (does not include .pdf)
     resumeName = nameRegex.search(resumePDF)
-    name = resumeName.group(0)
-    #resumes = open(r'digestedResumes.txt', 'r')
-    #resumeText = resumes.read()
-    #searchRegex = re.compile('Name:')
+    name = resumeName.group(1)
+    with open('digestedResumes.txt', 'r') as f:
+        resumes = f.readlines()
+        for line in resumes:
+            print(dict(line))
     resumeEntry = {'Name':name, 'Date':date.today(), 'Content':str(resumeWords)}
     resumes = open(r'digestedResumes.txt', 'a')
     resumes.write(str(resumeEntry) + '\n')
