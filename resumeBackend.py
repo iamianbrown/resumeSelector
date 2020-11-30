@@ -59,14 +59,12 @@ def digest(text): #resume is a pdf file (as str)
 #adds a new resume into database
 def addResume(resumePDF):
     resumeWords = digest(pdfminer.high_level.extract_text(resumePDF))
-    nameRegex = re.compile(r'([^\/^]+)(.pdf)') #gets everything after last / upto file type (does not include .pdf)
+    nameRegex = re.compile(r'([^\/^]+)(.pdf)') #gets everything after last / upto file type
+    #inside of [], ^<character> means not the following
     resumeName = nameRegex.search(resumePDF)
     name = resumeName.group(1)
-    with open('digestedResumes.txt', 'r') as f:
-        resumes = f.readlines()
-        for line in resumes:
-            print(dict(line))
-    resumeEntry = {'Name':name, 'Date':date.today(), 'Content':str(resumeWords)}
+    
+    resumeEntry = {'Name':name, 'Date Added':str(date.today()), 'Content':str(resumeWords)}
     resumes = open(r'digestedResumes.txt', 'a')
     resumes.write(str(resumeEntry) + '\n')
     resumes.close()
@@ -75,6 +73,25 @@ def addResume(resumePDF):
     #with keynames the same as resume filenames)
 
 #finds the resume with the highest number of keyword hits
+
+#reads the file where the resume keyword dictionaries are stored
+def getResumes(resumeFile):
+    resumeDict = {} #name-indexed dictionary of dictionaries (subdictionaries include date added and content)
+    nameRegex = re.compile(r'\'Name:\'\s+\'(.+)\',')
+    dateRegex = re.compile(r'\'Date Added:\'\s+\'(.+)\',')
+    with open('digestedResumes.txt', 'r') as f:
+        resumes = f.readlines()
+        for line in resumes:
+            search = nameRegex.search(line) #find name of resume
+            name = search.group(1)
+            search = dateRegex.search(line) #find date resume was added
+            dateAdded = search.group(1)
+            content = extractContent(line)
+            #resumeDict[name] = #date, content
+
+def extractContent(resumeEntry):
+    content = {}
+    #contentRegex = re.compile
 '''
 def findBestResume(description):
     descriptionWords = digest(description)
