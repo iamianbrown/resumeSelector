@@ -44,6 +44,20 @@ def digest(text): #resume is a pdf file (as str)
        newWords[numRegex.sub('', word)] = words[word]
     words = newWords
 
+    #add subwords in symbol-containing words to dictionary
+    newWords = {}
+    for word in words.keys():
+        newWords[word] = words[word]
+        subWords = re.split(r'\W', word)
+        if len(subWords) > 1:
+            print(subWords)
+        for subWord in subWords:
+            if subWord in words: #increment if already in words
+                newWords[subWord] += 1
+            else: #otherwise create new entru
+                newWords[subWord] = 1
+    words = newWords
+
     #remove all short/empty words and propositions from dictionary
     commonWords = set(['of','in','to','for','with','on','at','from','by','about','as','into','like','through',\
         'after','over','between','out','against','during','without','before','under','around','among','as','if',\
@@ -91,6 +105,7 @@ def getResumes(resumeFile):
 
 def extractContent(resumeEntry):
     content = {}
+    contentRegex = re.compile(r'\'Content:\'\s+\'(.+)\',')
     #contentRegex = re.compile
 '''
 def findBestResume(description):
