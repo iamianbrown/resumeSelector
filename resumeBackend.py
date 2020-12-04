@@ -1,6 +1,7 @@
 import re
 import pdfminer.high_level
 import pprint
+import json
 from datetime import date
 res = '/Users/ian/Documents/Personal/Employment/Resumes/Resume 11:20:2020.pdf'
 
@@ -49,8 +50,6 @@ def digest(text): #resume is a pdf file (as str)
     for word in words.keys():
         newWords[word] = words[word]
         subWords = re.split(r'\W', word)
-        if len(subWords) > 1:
-            print(subWords)
         for subWord in subWords:
             if subWord in words: #increment if already in words
                 newWords[subWord] += 1
@@ -73,40 +72,34 @@ def digest(text): #resume is a pdf file (as str)
 #adds a new resume into database
 def addResume(resumePDF):
     resumeWords = digest(pdfminer.high_level.extract_text(resumePDF))
-    nameRegex = re.compile(r'([^\/^]+)(.pdf)') #gets everything after last / upto file type
+    nameRegex = re.compile(r'([^\/]+)(.pdf)') #gets everything after last / upto file type
     #inside of [], ^<character> means not the following
     resumeName = nameRegex.search(resumePDF)
     name = resumeName.group(1)
     
-    resumeEntry = {'Name':name, 'Date Added':str(date.today()), 'Content':str(resumeWords)}
-    resumes = open(r'digestedResumes.txt', 'a')
-    resumes.write(str(resumeEntry) + '\n')
-    resumes.close()
+    #copy and save pdf in application files
+    entry = json.dumps({'Name':name, 'Date Added':str(date.today()), 'Content':resumeWords})
+    with open(r'digestedResumes.json', 'w') as f:
+        f.write(entry)
+    
 
     #pickle resumeWords and store (should be stored in one file as a dictionary
     #with keynames the same as resume filenames)
 
-#finds the resume with the highest number of keyword hits
-
 #reads the file where the resume keyword dictionaries are stored
-def getResumes(resumeFile):
-    resumeDict = {} #name-indexed dictionary of dictionaries (subdictionaries include date added and content)
-    nameRegex = re.compile(r'\'Name:\'\s+\'(.+)\',')
-    dateRegex = re.compile(r'\'Date Added:\'\s+\'(.+)\',')
-    with open('digestedResumes.txt', 'r') as f:
-        resumes = f.readlines()
-        for line in resumes:
-            search = nameRegex.search(line) #find name of resume
-            name = search.group(1)
-            search = dateRegex.search(line) #find date resume was added
-            dateAdded = search.group(1)
-            content = extractContent(line)
-            #resumeDict[name] = #date, content
-
-def extractContent(resumeEntry):
-    content = {}
-    contentRegex = re.compile(r'\'Content:\'\s+\'(.+)\',')
-    #contentRegex = re.compile
+def getResumes(dictFile):
+    with open(dictFile) as f:
+        data = f.read()
+    print(data)
+    '''
+    resumes = []
+    i = 0 #iteration variable to number each resume
+    for line in datalines:
+        js = json.loads(line)
+        resumes[i] = js
+        i += 1
+'''
+    #return resumes
 '''
 def findBestResume(description):
     descriptionWords = digest(description)
