@@ -91,7 +91,7 @@ def addResume(resumePDF):
     resumes.append(entry)
     with open(resumeFile, 'w') as f:
         out = json.dumps(resumes)
-        f.write(json)
+        f.write(out)
     
         
     
