@@ -3,6 +3,8 @@ import pdfminer.high_level
 import pprint
 import json
 from datetime import date
+import os.path
+from os import path
 res = '/Users/ian/Documents/Personal/Employment/Resumes/Resume 11:20:2020.pdf'
 
 def stripSymbols(word):#remove symbols from ends of words
@@ -78,28 +80,27 @@ def addResume(resumePDF):
     name = resumeName.group(1)
     
     #copy and save pdf in application files
-    entry = json.dumps({'Name':name, 'Date Added':str(date.today()), 'Content':resumeWords})
-    with open(r'digestedResumes.json', 'w') as f:
-        f.write(entry)
+    entry = {'Name':name, 'Date Added':str(date.today()), 'Content':resumeWords}
+    resumeFile = r'digestedResumes.json'
+    resumes = []
+    if os.path.exists(resumeFile):
+        with open(resumeFile, 'r') as f:
+            fileContent = f.read()
+            resumes = json.loads(fileContent)
+    #needs to check here that resume isn't already in list
+    resumes.append(entry)
+    with open(resumeFile, 'w') as f:
+        out = json.dumps(resumes)
+        f.write(json)
+    
+        
     
 
     #pickle resumeWords and store (should be stored in one file as a dictionary
     #with keynames the same as resume filenames)
 
 #reads the file where the resume keyword dictionaries are stored
-def getResumes(dictFile):
-    with open(dictFile) as f:
-        data = f.read()
-    print(data)
-    '''
-    resumes = []
-    i = 0 #iteration variable to number each resume
-    for line in datalines:
-        js = json.loads(line)
-        resumes[i] = js
-        i += 1
-'''
-    #return resumes
+
 '''
 def findBestResume(description):
     descriptionWords = digest(description)
