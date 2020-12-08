@@ -153,7 +153,13 @@ def addResume(resumePDF):
         out = json.dumps(resumes)
         f.write(out)
     
-    
+def delResume(resumeName):
+    resumeFile = r'digestedResumes.json'
+    if os.path.exists(resumeFile):
+        with open(resumeFile) as f:
+            fileContent = f.read()
+            resumes = json.loads(fileContent)
+            #find resume to delete
 
     #pickle resumeWords and store (should be stored in one file as a dictionary
     #with keynames the same as resume filenames)
