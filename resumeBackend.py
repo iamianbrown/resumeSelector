@@ -5,7 +5,8 @@ import json
 from datetime import date
 import os.path
 from os import path
-res = '/Users/ian/Documents/Personal/Employment/Resumes/Resume 11:20:2020.pdf'
+resume1 = '/Users/ian/Documents/Personal/Employment/Resumes/Resume 11:20:2020.pdf'
+resume2 = '/Users/ian/Documents/Personal/Employment/Resumes/20201204 Resume.pdf'
 
 def stripSymbols(word):#remove symbols from ends of words
     regexPattern = re.compile(r'^[\W_]+') 
@@ -25,7 +26,8 @@ def stripSymbols(word):#remove symbols from ends of words
 #could use library that finds similar words
 
 #digest a text input into a keyword dictionary
-def digest(text): #resume is a pdf file (as str)
+def digestResume(resumePDF): #resume is a pdf file (as str)
+    text = pdfminer.high_level.extract_text(resumePDF)
     text = text.lower() #make search case insensitive
     textLst = text.split() #parse resume into list
     words = {} #dictionary where word count will be stored
@@ -71,29 +73,87 @@ def digest(text): #resume is a pdf file (as str)
     words = newWords
     return words
 
-#adds a new resume into database
+#get job description (input as plain text) word count
+def digestDescription(text): 
+    text = text.lower() #make search case insensitive
+    textLst = text.split() #parse resume into list
+    words = {} #dictionary where word count will be stored
+
+    #count number of instances of each word and strip symbols off of them
+    #make symbol-only words empty
+    newWords = {} #new dictionary to hold updated keys
+    for word in textLst:
+        if stripSymbols(word) in newWords.keys():
+            newWords[stripSymbols(word)] += 1
+        else:
+            newWords[stripSymbols(word)] = 1
+    words = newWords
+
+   #make all number-symbol words empty
+    newWords = {} #reset newWords
+    numRegex = re.compile(r'^[\W_\d]+$') #selects all number-symbol words
+    for word in words.keys():
+       newWords[numRegex.sub('', word)] = words[word]
+    words = newWords
+
+    #add subwords in symbol-containing words to dictionary
+    newWords = {}
+    for word in words.keys():
+        newWords[word] = words[word]
+        subWords = re.split(r'\W', word)
+        for subWord in subWords:
+            if subWord in words: #increment if already in words
+                newWords[subWord] += 1
+            else: #otherwise create new entru
+                newWords[subWord] = 1
+    words = newWords
+
+    #remove all short/empty words and propositions from dictionary
+    commonWords = set(['of','in','to','for','with','on','at','from','by','about','as','into','like','through',\
+        'after','over','between','out','against','during','without','before','under','around','among','as','if',\
+            'than','that','though','so','and','or','nor','but','yet', 'may', 'the','how','then','my','while','good',\
+                 'st','ave','blvd','way','not','an','within','up'])
+    newWords = {} #reset newWords
+    for word in words.keys():
+        if len(word) >= 2 and word not in commonWords:
+            newWords[word] = words[word]
+    words = newWords
+    return words
+
+#adds a new resume into database (returns true if successful)
+#returns false if same name resume was detected
 def addResume(resumePDF):
-    resumeWords = digest(pdfminer.high_level.extract_text(resumePDF))
-    nameRegex = re.compile(r'([^\/]+)(.pdf)') #gets everything after last / upto file type
-    #inside of [], ^<character> means not the following
-    resumeName = nameRegex.search(resumePDF)
-    name = resumeName.group(1)
     
-    #copy and save pdf in application files
-    entry = {'Name':name, 'Date Added':str(date.today()), 'Content':resumeWords}
+    #get filename from resumePDF
+    nameRegex = re.compile(r'([^\/]+).pdf') #gets everything after last / upto file type
+    #inside of [], ^<character> means not the following
+    name = nameRegex.search(resumePDF)
+    resumeName = name.group(1)
+    
+    #write resume to file (if there exist no duplicates)
     resumeFile = r'digestedResumes.json'
     resumes = []
     if os.path.exists(resumeFile):
         with open(resumeFile, 'r') as f:
             fileContent = f.read()
             resumes = json.loads(fileContent)
-    #needs to check here that resume isn't already in list
-    resumes.append(entry)
+            if not any(res['Name'] == resumeName for res in resumes): #check that resume not already in file
+                #convert resume pdf into json with digested word count and add
+                resumeWords = digestResume(resumePDF)
+                entry = {'Name':resumeName, 'Date Added':str(date.today()), 'Content':resumeWords}
+                resumes.append(entry)
+            else: #return a duplicate resume error
+                return False
+    else: #if file is empty, simply write resume
+        #convert resume pdf into json with digested word count
+        resumeWords = digestResume(resumePDF)
+        entry = {'Name':resumeName, 'Date Added':str(date.today()), 'Content':resumeWords}
+        resumes.append(entry)
     with open(resumeFile, 'w') as f:
         out = json.dumps(resumes)
         f.write(out)
     
-        
+
     
 
     #pickle resumeWords and store (should be stored in one file as a dictionary
@@ -112,4 +172,5 @@ def findBestResume(description):
                 scores[resume] += 1
     #return resume with highest score
 '''
-addResume(res)
+addResume(resume1)
+addResume(resume2)
