@@ -153,7 +153,6 @@ def addResume(resumePDF):
         out = json.dumps(resumes)
         f.write(out)
     
-
     
 
     #pickle resumeWords and store (should be stored in one file as a dictionary
