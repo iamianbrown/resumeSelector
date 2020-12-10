@@ -169,11 +169,13 @@ def delResume(resumeName):
         with open(resumeFile) as f:
             fileContent = f.read()
             resumes = json.loads(fileContent)
-            if any(resume['Name'] == resumeName for resume in resumes):
-                resumes = [resume for resume in resumes if resume['Name'] != resumeName]
-                content = json.dumps(resumes)
-                with open(resumeFile, 'w') as f:
-                    f.write(content)
+            for resume in resumes:
+                if resume['Name'] == resumeName:
+                    resumes = [resume for resume in resumes if resume['Name'] != resumeName]
+                    content = json.dumps(resumes)
+                    with open(resumeFile, 'w') as f:
+                        f.write(content)
+                    os.remove(resume['Location'])
                 return True #returns true if resume was successfully deleted
             else:
                 return False #returns false if there is no resume with matching name
@@ -198,3 +200,4 @@ def findBestResume(description):
 startup()
 digestResume(resume1)
 digestResume(resume2)
+delResume('20201204 Resume')
