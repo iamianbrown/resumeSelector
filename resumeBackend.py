@@ -159,6 +159,19 @@ def delResume(resumeName):
         with open(resumeFile) as f:
             fileContent = f.read()
             resumes = json.loads(fileContent)
+            newResumes = []
+            for resume in resumes:
+                if resume['Name'] != resumeName:
+                    newResumes.append(resume)
+            if len(newResumes) < len(resumes): #overwrite file if a matching resume was found
+                content = json.dumps(newResumes)
+                with open(resumeFile, 'w') as f:
+                    f.write(content)
+                return True #returns true if resume was successfully deleted
+            else:
+                return False #returns false if there is no resume with matching name
+        
+
             #find resume to delete
 
     #pickle resumeWords and store (should be stored in one file as a dictionary
@@ -177,5 +190,8 @@ def findBestResume(description):
                 scores[resume] += 1
     #return resume with highest score
 '''
+with open(r'digestedResumes.json') as f:
+    print(json.loads(f.read()))
 addResume(resume1)
 addResume(resume2)
+delResume('20201204 Resume')
