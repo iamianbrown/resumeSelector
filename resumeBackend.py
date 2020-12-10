@@ -154,10 +154,10 @@ def addResume(resumePDF):
         f.write(out)
         return True
 
-#deletes a resume with a given name
+#deletes a resume with a given name, if it exists
 def delResume(resumeName):
     resumeFile = r'digestedResumes.json'
-    if os.path.exists(resumeFile):
+    if os.path.exists(resumeFile): #checks that file exists
         with open(resumeFile) as f:
             fileContent = f.read()
             resumes = json.loads(fileContent)
@@ -169,7 +169,6 @@ def delResume(resumeName):
                 return True #returns true if resume was successfully deleted
             else:
                 return False #returns false if there is no resume with matching name
-            
                 
             
 
