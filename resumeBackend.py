@@ -121,7 +121,7 @@ def digestDescription(text):
     return words
 
 #adds a new resume into database (returns true if successful)
-#returns false if same name resume was detected
+#returns false if resume with duplicate name already exists
 def addResume(resumePDF):
     
     #get filename from resumePDF
@@ -130,7 +130,7 @@ def addResume(resumePDF):
     name = nameRegex.search(resumePDF)
     resumeName = name.group(1)
     
-    #write resume to file (if there exist no duplicates)
+    #write resume to file (if there exist no duplicates), returns False if resume is a duplicate
     resumeFile = r'digestedResumes.json'
     resumes = []
     if os.path.exists(resumeFile):
@@ -152,33 +152,31 @@ def addResume(resumePDF):
     with open(resumeFile, 'w') as f:
         out = json.dumps(resumes)
         f.write(out)
-    
+        return True
+
+#deletes a resume with a given name
 def delResume(resumeName):
     resumeFile = r'digestedResumes.json'
     if os.path.exists(resumeFile):
         with open(resumeFile) as f:
             fileContent = f.read()
             resumes = json.loads(fileContent)
-            newResumes = []
-            for resume in resumes:
-                if resume['Name'] != resumeName:
-                    newResumes.append(resume)
-            if len(newResumes) < len(resumes): #overwrite file if a matching resume was found
-                content = json.dumps(newResumes)
+            if any(resume['Name'] == resumeName for resume in resumes):
+                resumes = [resume for resume in resumes if resume['Name'] != resumeName]
+                content = json.dumps(resumes)
                 with open(resumeFile, 'w') as f:
                     f.write(content)
                 return True #returns true if resume was successfully deleted
             else:
                 return False #returns false if there is no resume with matching name
-        
+            
+                
+            
 
-            #find resume to delete
-
-    #pickle resumeWords and store (should be stored in one file as a dictionary
-    #with keynames the same as resume filenames)
-
-#reads the file where the resume keyword dictionaries are stored
-
+#deletes resume with name resumeToDeleteName and replaces it with data from replacement (replacement is pdf)
+def replaceResume(resumeToDeleteName, replacement):
+    delResume(resumeToDeleteName)
+    addResume(replacement)
 '''
 def findBestResume(description):
     descriptionWords = digest(description)
@@ -190,8 +188,6 @@ def findBestResume(description):
                 scores[resume] += 1
     #return resume with highest score
 '''
-with open(r'digestedResumes.json') as f:
-    print(json.loads(f.read()))
 addResume(resume1)
 addResume(resume2)
 delResume('20201204 Resume')
