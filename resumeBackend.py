@@ -155,7 +155,7 @@ def addResume(resumePDF):
     else: #if file is empty, simply write resume
         #convert resume pdf into json with digested word count
         resumeWords = digestResume(resumePDF)
-        entry = {'Name':resumeName, 'Date Added':str(date.today()), 'Location': os.getcwd() + '/resumePDFs/' + filename, 'Content':resumeWords}
+        entry = {'Name':resumeName, 'Date Added':str(date.today()), 'Location': 'resumePDFs/' + filename, 'Content':resumeWords}
         resumes.append(entry)
     with open(resumeFile, 'w') as f:
         out = json.dumps(resumes)
@@ -166,17 +166,23 @@ def addResume(resumePDF):
 def delResume(resumeName):
     resumeFile = r'digestedResumes.json'
     if os.path.exists(resumeFile): #checks that file exists
+        print('exists')
         with open(resumeFile) as f:
             fileContent = f.read()
             resumes = json.loads(fileContent)
+            print(resumes[0]['Name'])
+            print(len(resumes))
             for resume in resumes:
+                print(list(resume.keys()))
                 if resume['Name'] == resumeName:
+                    print('match found')
                     resumes = [resume for resume in resumes if resume['Name'] != resumeName]
                     content = json.dumps(resumes)
                     with open(resumeFile, 'w') as f:
                         f.write(content)
+                        print('writing')
                     os.remove(resume['Location'])
-                return True #returns true if resume was successfully deleted
+                    return True #returns true if resume was successfully deleted
             else:
                 return False #returns false if there is no resume with matching name
                 
