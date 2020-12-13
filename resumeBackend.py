@@ -7,7 +7,65 @@ import os
 from shutil import copy
 resume1 = '/Users/ian/Documents/Personal/Employment/Resumes/Resume 11:20:2020.pdf'
 resume2 = '/Users/ian/Documents/Personal/Employment/Resumes/20201204 Resume.pdf'
+description1 = '''Through its people and brands, CNH Industrial delivers power, technology and innovation to farmers, builders and drivers all around the world. Each of its brands, including Case IH, New Holland Agriculture, Case and New Holland Construction, FPT Industrial, Capital, and Parts & Service, is a major international force in its specific sector. The Vehicle Dynamics Simulation Engineering Intern will work with CREO model preparation for SImulation. This intern will also be involved in managing CREO models for extracting properties for simulation models, tire simulation models and vehicle and component suspension development.
 
+Responsibilities
+
+Calculate ride index numbers from simulation models and physical cabs at cab floor
+
+If needed, collect acceleration data in cabs in collaboration with test engineer and analyze test data as per ISO 2631 
+Develop test procedure documents to request test data as inputs to simulation data
+Develop Vehicle Dynamics simulation models in Simcenter 3D Motion from CREO files and run error check analysis
+Work with experienced Engineer to set up complex events including ISO and bump tracks and post process the simulation results in standard format
+Contribute to meet or exceed calendar deadlines 
+
+
+Qualifications
+
+Must be pursuing a minimum of a Masters or Ph.D program in Mechanical Engineering, Physics, or related degree area
+Must have reliable transportation during internship to get to and from facility 
+
+
+Preferred Qualifications
+
+Working with CREO and Simcenter 3D Motion softwares
+SAE Baja contributing member
+A successful candidate will have research experience in MultiBody Dynamics and have conducted experiments to validate simulation models 
+
+
+EEO 
+
+CNH Industrial is an equal opportunity employer. This company considers candidates regardless of race, color, religion, sex, sexual orientation, gender identity, national origin, disability, or veteran status. Applicants can learn more about their rights by viewing the federal "EEO is the Law" poster and its supplement here .
+
+If you need reasonable accommodation with the application process, please call 1-800-889-4422 option 1 and then option 5, or contact us at narecruitingmailbox@cnhind.com.
+
+Read about our company’s commitment to pay transparency by clicking this link: pay transparency notice .
+
+Options
+
+Apply for this job online Apply
+
+Share
+
+Refer a Friend Refer
+
+Sorry the Share function is not working properly at this moment. Please refresh the page and try again later.
+
+Share on your newsfeed
+
+Need help finding the right job? 
+
+We can recommend jobs specifically for you! Click here to get started.
+Seniority Level
+Internship
+
+Industry
+Electrical & Electronic Manufacturing Automotive Mechanical Or Industrial Engineering
+Employment Type
+Internship
+
+Job Functions
+Education  Training'''
 def stripSymbols(word):#remove symbols from ends of words
     regexPattern = re.compile(r'^[\W_]+') 
     newWord = regexPattern.sub('', word) #remove symbols from beginning
@@ -142,16 +200,14 @@ def addResume(resumePDF):
     resumeFile = r'digestedResumes.json'
     resumes = []
     if os.path.exists(resumeFile):
-        with open(resumeFile, 'r') as f:
-            fileContent = f.read()
-            resumes = json.loads(fileContent)
-            if not any(res['Name'] == resumeName for res in resumes): #check that resume not already in file
-                #convert resume pdf into json with digested word count and add
-                resumeWords = digestResume(resumePDF)
-                entry = {'Name':resumeName, 'Date Added':str(date.today()), 'Location': os.getcwd() + '/resumePDFs/' + filename, 'Content':resumeWords}
-                resumes.append(entry)
-            else: #return a duplicate resume error
-                return False
+        resumes = getResumes()
+        if not any(res['Name'] == resumeName for res in resumes): #check that resume not already in file
+            #convert resume pdf into json with digested word count and add
+            resumeWords = digestResume(resumePDF)
+            entry = {'Name':resumeName, 'Date Added':str(date.today()), 'Location': os.getcwd() + '/resumePDFs/' + filename, 'Content':resumeWords}
+            resumes.append(entry)
+        else: #return a duplicate resume error
+            return False
     else: #if file is empty, simply write resume
         #convert resume pdf into json with digested word count
         resumeWords = digestResume(resumePDF)
@@ -162,48 +218,56 @@ def addResume(resumePDF):
         f.write(out)
         return True
 
+def getResumes():
+    with open(r'digestedResumes.json', 'r') as f:
+            fileContent = f.read()
+            resumes = json.loads(fileContent)
+    return resumes
+
 #deletes a resume with a given name, if it exists
 def delResume(resumeName):
     resumeFile = r'digestedResumes.json'
-    if os.path.exists(resumeFile): #checks that file exists
-        print('exists')
-        with open(resumeFile) as f:
-            fileContent = f.read()
-            resumes = json.loads(fileContent)
-            print(resumes[0]['Name'])
-            print(len(resumes))
-            for resume in resumes:
-                print(list(resume.keys()))
-                if resume['Name'] == resumeName:
-                    print('match found')
-                    resumes = [resume for resume in resumes if resume['Name'] != resumeName]
-                    content = json.dumps(resumes)
-                    with open(resumeFile, 'w') as f:
-                        f.write(content)
-                        print('writing')
-                    os.remove(resume['Location'])
-                    return True #returns true if resume was successfully deleted
-            else:
-                return False #returns false if there is no resume with matching name
-                
-            
+    resumes = getResumes()
+    for resume in resumes:
+        if resume['Name'] == resumeName:
+            resumes = [resume for resume in resumes if resume['Name'] != resumeName]
+            content = json.dumps(resumes)
+            with open(resumeFile, 'w') as f:
+                f.write(content)
+            os.remove(resume['Location'])
+            return True #returns true if resume was successfully deleted
+        else:
+            return False #returns false if there is no resume with matching name
 
 #deletes resume with name resumeToDeleteName and replaces it with data from replacement (replacement is pdf)
 def replaceResume(resumeToDeleteName, replacement):
     delResume(resumeToDeleteName)
     addResume(replacement)
-'''
+
 def findBestResume(description):
-    descriptionWords = digest(description)
-    scores = {} #dictionary to keep track of how many same word instances there are for each resume
-    for resume in resumeList:
-        scores[resume] = 0
+    descriptionWords = digestDescription(description)
+    scores = [] #list containing dict for each resume with name and score
+    resumes = getResumes()
+    i = 0
+    for res in resumes:
+        scores[i] = {'Name':res['Name'],'Score':0}
         for word in descriptionWords:
-            if word in resume:
-                scores[resume] += 1
+            if word in res['Content']:
+                scores[i]['Score'] += 1
+        i += 1
+    i = 0
+    bestResume = 0
+    maximum = 0
+    for elem in scores:
+        if elem['Score'] > maximum:
+            maximum = elem['Score']
+            bestResume = i
+        i += 1
+    return next(res for res in resumes if res[scores[bestResume]['Name']] == res['Name'])
+
     #return resume with highest score
-'''
 startup()
 digestResume(resume1)
 digestResume(resume2)
 delResume('20201204 Resume')
+findBestResume
