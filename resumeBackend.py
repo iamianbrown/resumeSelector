@@ -128,7 +128,7 @@ def digestResume(resumePDF): #resume is a pdf file (as str)
     commonWords = set(['of','in','to','for','with','on','at','from','by','about','as','into','like','through',\
         'after','over','between','out','against','during','without','before','under','around','among','as','if',\
             'than','that','though','so','and','or','nor','but','yet', 'may', 'the','how','then','my','while','good',\
-                 'st','ave','blvd','way','not','an','within','up'])
+                 'st','ave','blvd','way','not','an','within','up','will'])
     newWords = {} #reset newWords
     for word in words.keys():
         if len(word) >= 2 and word not in commonWords:
@@ -175,7 +175,7 @@ def digestDescription(text):
     commonWords = set(['of','in','to','for','with','on','at','from','by','about','as','into','like','through',\
         'after','over','between','out','against','during','without','before','under','around','among','as','if',\
             'than','that','though','so','and','or','nor','but','yet', 'may', 'the','how','then','my','while','good',\
-                 'st','ave','blvd','way','not','an','within','up'])
+                 'st','ave','blvd','way','not','an','within','up','com','will'])
     newWords = {} #reset newWords
     for word in words.keys():
         if len(word) >= 2 and word not in commonWords:
@@ -218,6 +218,7 @@ def addResume(resumePDF):
         f.write(out)
         return True
 
+#opens and reads stored resume data
 def getResumes():
     with open(r'digestedResumes.json', 'r') as f:
             fileContent = f.read()
@@ -248,26 +249,27 @@ def findBestResume(description):
     descriptionWords = digestDescription(description)
     scores = [] #list containing dict for each resume with name and score
     resumes = getResumes()
-    i = 0
     for res in resumes:
-        scores[i] = {'Name':res['Name'],'Score':0}
+        score = 0
         for word in descriptionWords:
             if word in res['Content']:
-                scores[i]['Score'] += 1
-        i += 1
-    i = 0
-    bestResume = 0
+                score += 1
+                print(word)
+        pprint.pprint(res['Content'])
+        scores.append({'Name':res['Name'],'Score':score})
     maximum = 0
+    print(scores)
     for elem in scores:
         if elem['Score'] > maximum:
             maximum = elem['Score']
-            bestResume = i
-        i += 1
-    return next(res for res in resumes if res[scores[bestResume]['Name']] == res['Name'])
+            bestResume = elem['Name']
+    for res in resumes:
+        if res['Name'] == bestResume:
+            return res['Location']
 
-    #return resume with highest score
+
 startup()
-digestResume(resume1)
-digestResume(resume2)
-delResume('20201204 Resume')
-findBestResume
+addResume(resume1)
+addResume(resume2)
+print(len(getResumes()))
+print(findBestResume(description1))
