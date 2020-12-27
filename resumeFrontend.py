@@ -3,6 +3,7 @@ import sys
 from PyQt5 import QtWidgets
 pm = __import__('resumeMainWindow')
 
+
 def window():
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()

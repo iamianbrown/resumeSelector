@@ -9,7 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from PyQt5.QtWidgets import (QWidget, QPushButton, QLineEdit, QInputDialog, QApplication)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -50,6 +50,7 @@ class Ui_MainWindow(object):
         self.Add.setMinimumSize(QtCore.QSize(130, 52))
         self.Add.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.Add.setObjectName("Add")
+        self.Add.clicked.connect(self.ShowDialog)
         self.horizontalLayout_2.addWidget(self.Add)
         self.Replace = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -107,13 +108,21 @@ class Ui_MainWindow(object):
         self.Description.setText(_translate("MainWindow", "Description"))
         self.PasteJobDescription.setText(_translate("MainWindow", "Paste Job Description"))
 
+class Dialog1(QWidget)
+    def ShowDialog(self):
+        text, ok = QInputDialog.getText(self, 'Input Dialog', 'Enter Text:')
+
+        if ok:
+            self.Add.setText(text)
+
+
 '''
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
+    ui.setupUi(MainWindow
     MainWindow.show()
     sys.exit(app.exec_())
 '''
