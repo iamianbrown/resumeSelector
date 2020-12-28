@@ -11,5 +11,4 @@ def window():
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-
 window()

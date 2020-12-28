@@ -9,7 +9,8 @@
 
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import (QWidget, QPushButton, QLineEdit, QInputDialog, QApplication)
+from PyQt5.QtWidgets import (QWidget, QPushButton, QFileDialog, QApplication)
+backend = __import__('resumeBackend')
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -50,7 +51,7 @@ class Ui_MainWindow(object):
         self.Add.setMinimumSize(QtCore.QSize(130, 52))
         self.Add.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.Add.setObjectName("Add")
-        self.Add.clicked.connect(self.ShowDialog)
+        self.Add.clicked.connect(self.ShowAddDialog)
         self.horizontalLayout_2.addWidget(self.Add)
         self.Replace = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -108,13 +109,13 @@ class Ui_MainWindow(object):
         self.Description.setText(_translate("MainWindow", "Description"))
         self.PasteJobDescription.setText(_translate("MainWindow", "Paste Job Description"))
     
-    def ShowDialog(self):
-        widget = QWidget()
-        text, ok = QInputDialog.getText(widget,'Input Dialog', 'Enter Text:')
-        QInputDialog()
+    def ShowAddDialog(self):
+        d = QWidget()
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getOpenFileName(d, 'Select a Resume', '','PDF Files (*.pdf)', options=options)
+        backend.addResume(fileName)
 
-        if ok:
-            self.Add.setText(text)
 
 
 def window():
