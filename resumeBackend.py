@@ -5,7 +5,7 @@ import json
 from datetime import date
 import os
 from shutil import copy
-resume1 = '/Users/ian/Documents/Personal/Employment/Resumes/Resume 11:20:2020.pdf'
+resume1 = '/Users/ian/Documents/Personal/Employment/Resumes/Resume 8:22:2020.pdf'
 resume2 = '/Users/ian/Documents/Personal/Employment/Resumes/20201204 Resume.pdf'
 description1 = '''Through its people and brands, CNH Industrial delivers power, technology and innovation to farmers, builders and drivers all around the world. Each of its brands, including Case IH, New Holland Agriculture, Case and New Holland Construction, FPT Industrial, Capital, and Parts & Service, is a major international force in its specific sector. The Vehicle Dynamics Simulation Engineering Intern will work with CREO model preparation for SImulation. This intern will also be involved in managing CREO models for extracting properties for simulation models, tire simulation models and vehicle and component suspension development.
 
@@ -118,6 +118,7 @@ def digestResume(resumePDF): #resume is a pdf file (as str)
         newWords[word] = words[word]
         subWords = re.split(r'\W', word)
         for subWord in subWords:
+            print(subWord)
             if subWord in words and subWord != word: #increment if already in words
                 newWords[subWord] += 1
             else: #otherwise create new entru
@@ -271,5 +272,4 @@ def findBestResume(description):
 startup()
 addResume(resume1)
 addResume(resume2)
-print(len(getResumes()))
-print(findBestResume(description1))
+

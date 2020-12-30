@@ -114,6 +114,7 @@ class Ui_MainWindow(object):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         fileName, _ = QFileDialog.getOpenFileName(d, 'Select a Resume', '','PDF Files (*.pdf)', options=options)
+        print(fileName)
         backend.addResume(fileName)
 
 

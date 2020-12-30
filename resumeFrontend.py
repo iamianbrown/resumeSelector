@@ -11,4 +11,6 @@ def window():
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
+
+pm.backend.startup()
 window()
