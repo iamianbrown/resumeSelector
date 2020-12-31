@@ -111,11 +111,13 @@ class Ui_MainWindow(object):
     
     def ShowAddDialog(self):
         d = QWidget()
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(d, 'Select a Resume', '','PDF Files (*.pdf)', options=options)
-        print(fileName)
+        fileName, _ = QFileDialog.getOpenFileName(d, 'Select a Resume', '','PDF Files (*.pdf)')
+        print(type(fileName))
         backend.addResume(fileName)
+
+    def ShowDelDialog(self):
+        d = QWidget()
+        opetions = QFileDialog.Options()
 
 
 

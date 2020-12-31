@@ -60,10 +60,11 @@ def digestResume(resumePDF): #resume is a pdf file (as str)
         newWords[word] = words[word]
         subWords = re.split(r'\W', word)
         for subWord in subWords:
-            if subWord in newWords: #increment if already in newWords
-                newWords[subWord] += 1
-            else: #otherwise create new entry
-                newWords[subWord] = 1
+            if '\\' not in subWord:
+                if subWord in newWords: #increment if already in newWords
+                    newWords[subWord] += 1
+                else: #otherwise create new entry
+                    newWords[subWord] = 1
     words = newWords
 
     #remove all short/empty words and propositions from dictionary
@@ -107,7 +108,7 @@ def digestDescription(text):
         newWords[word] = words[word]
         subWords = re.split(r'\W', word)
         for subWord in subWords:
-            if subWord in words: #increment if already in words
+            if subWord in newWords: #increment if already in words
                 newWords[subWord] += 1
             else: #otherwise create new entru
                 newWords[subWord] = 1
@@ -178,7 +179,7 @@ def delResume(resumeName):
             with open(resumeFile, 'w') as f:
                 f.write(content)
             os.remove(resume['Location'])
-            return True #returns true if resume was successfully deleted
+            return True  #returns true if resume was successfully deleted
         else:
             return False #returns false if there is no resume with matching name
 
