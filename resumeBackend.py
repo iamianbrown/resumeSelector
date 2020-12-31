@@ -7,65 +7,7 @@ import os
 from shutil import copy
 resume1 = '/Users/ian/Documents/Personal/Employment/Resumes/Resume 8:22:2020.pdf'
 resume2 = '/Users/ian/Documents/Personal/Employment/Resumes/20201204 Resume.pdf'
-description1 = '''Through its people and brands, CNH Industrial delivers power, technology and innovation to farmers, builders and drivers all around the world. Each of its brands, including Case IH, New Holland Agriculture, Case and New Holland Construction, FPT Industrial, Capital, and Parts & Service, is a major international force in its specific sector. The Vehicle Dynamics Simulation Engineering Intern will work with CREO model preparation for SImulation. This intern will also be involved in managing CREO models for extracting properties for simulation models, tire simulation models and vehicle and component suspension development.
 
-Responsibilities
-
-Calculate ride index numbers from simulation models and physical cabs at cab floor
-
-If needed, collect acceleration data in cabs in collaboration with test engineer and analyze test data as per ISO 2631 
-Develop test procedure documents to request test data as inputs to simulation data
-Develop Vehicle Dynamics simulation models in Simcenter 3D Motion from CREO files and run error check analysis
-Work with experienced Engineer to set up complex events including ISO and bump tracks and post process the simulation results in standard format
-Contribute to meet or exceed calendar deadlines 
-
-
-Qualifications
-
-Must be pursuing a minimum of a Masters or Ph.D program in Mechanical Engineering, Physics, or related degree area
-Must have reliable transportation during internship to get to and from facility 
-
-
-Preferred Qualifications
-
-Working with CREO and Simcenter 3D Motion softwares
-SAE Baja contributing member
-A successful candidate will have research experience in MultiBody Dynamics and have conducted experiments to validate simulation models 
-
-
-EEO 
-
-CNH Industrial is an equal opportunity employer. This company considers candidates regardless of race, color, religion, sex, sexual orientation, gender identity, national origin, disability, or veteran status. Applicants can learn more about their rights by viewing the federal "EEO is the Law" poster and its supplement here .
-
-If you need reasonable accommodation with the application process, please call 1-800-889-4422 option 1 and then option 5, or contact us at narecruitingmailbox@cnhind.com.
-
-Read about our company’s commitment to pay transparency by clicking this link: pay transparency notice .
-
-Options
-
-Apply for this job online Apply
-
-Share
-
-Refer a Friend Refer
-
-Sorry the Share function is not working properly at this moment. Please refresh the page and try again later.
-
-Share on your newsfeed
-
-Need help finding the right job? 
-
-We can recommend jobs specifically for you! Click here to get started.
-Seniority Level
-Internship
-
-Industry
-Electrical & Electronic Manufacturing Automotive Mechanical Or Industrial Engineering
-Employment Type
-Internship
-
-Job Functions
-Education  Training'''
 def stripSymbols(word):#remove symbols from ends of words
     regexPattern = re.compile(r'^[\W_]+') 
     newWord = regexPattern.sub('', word) #remove symbols from beginning
@@ -118,10 +60,9 @@ def digestResume(resumePDF): #resume is a pdf file (as str)
         newWords[word] = words[word]
         subWords = re.split(r'\W', word)
         for subWord in subWords:
-            print(subWord)
-            if subWord in words and subWord != word: #increment if already in words
+            if subWord in newWords: #increment if already in newWords
                 newWords[subWord] += 1
-            else: #otherwise create new entru
+            else: #otherwise create new entry
                 newWords[subWord] = 1
     words = newWords
 
@@ -269,7 +210,4 @@ def findBestResume(description):
             return res['Location']
 
 
-startup()
-addResume(resume1)
-addResume(resume2)
 
