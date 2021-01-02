@@ -121,12 +121,11 @@ class Ui_MainWindow(object):
             backend.addResume(fileName)
 
     def ShowDelDialog(self):
+        #change directory to the directory that this script is located in
         os.chdir(home)
-        os.chdir('/../..')
-        print(os.getcwd())
-        print(__file__)
-        os.chdir(__file__)
-        print(os.getcwd())
+        os.chdir('/..')
+        abspath = os.path.abspath(__file__)
+        os.chdir(os.path.dirname(abspath))
         d = QWidget()
 
 
