@@ -129,32 +129,35 @@ def digestDescription(text):
 #adds a new resume into database (returns true if successful)
 #returns false if resume with duplicate name already exists
 def addResume(resumePDF):
-    
+    #change directory to resumePDFs
+    abspath = os.path.abspath(__file__)
+    os.chdir(os.path.dirname(abspath) + '/resumePDFs')
     #get filename from resumePDF
     nameRegex = re.compile(r'([^\/]+)(.pdf)') #gets everything after last / upto file type
     #inside of [], ^<character> means not the following
     name = nameRegex.search(resumePDF)
     filename = name.group(1) + name.group(2)
     #copy resume pdf to be stored in app
-    copy(resumePDF, 'resumePDFs/' + filename)
-    
-    resumeName = name.group(1)
+    print(os.getcwd())
+    copy(resumePDF, filename)
+    #return to parent directory, where digestedResumes.json is stored
+    os.chdir('/..')
     #write resume to file (if there exist no duplicates), returns False if resume is a duplicate
     resumeFile = r'digestedResumes.json'
     resumes = []
     if os.path.exists(resumeFile):
         resumes = getResumes()
-        if not any(res['Name'] == resumeName for res in resumes): #check that resume not already in file
+        if not any(res['Name'] == filename for res in resumes): #check that resume not already in file
             #convert resume pdf into json with digested word count and add
             resumeWords = digestResume(resumePDF)
-            entry = {'Name':resumeName, 'Date Added':str(date.today()), 'Location': os.getcwd() + '/resumePDFs/' + filename, 'Content':resumeWords}
+            entry = {'Name':filename, 'Date Added':str(date.today()), 'Location': os.getcwd() + '/resumePDFs/' + filename, 'Content':resumeWords}
             resumes.append(entry)
-        else: #return a duplicate resume error
+        else: #return false if resume with that name already exists
             return False
     else: #if file is empty, simply write resume
         #convert resume pdf into json with digested word count
         resumeWords = digestResume(resumePDF)
-        entry = {'Name':resumeName, 'Date Added':str(date.today()), 'Location': 'resumePDFs/' + filename, 'Content':resumeWords}
+        entry = {'Name':filename, 'Date Added':str(date.today()), 'Location': 'resumePDFs/' + filename, 'Content':resumeWords}
         resumes.append(entry)
     with open(resumeFile, 'w') as f:
         out = json.dumps(resumes)
@@ -163,17 +166,23 @@ def addResume(resumePDF):
 
 #opens and reads stored resume data
 def getResumes():
+    #change directory to script's directory
+    abspath = os.path.abspath(__file__)
+    os.chdir(os.path.dirname(abspath))
     with open(r'digestedResumes.json', 'r') as f:
             fileContent = f.read()
             resumes = json.loads(fileContent)
     return resumes
 
 #deletes a resume with a given name, if it exists
-def delResume(resumeName):
+def delResume(resumeName): #takes resume as name with .pdf extension
+    #change directory to resumePDFs
+    abspath = os.path.abspath(__file__)
+    os.chdir(os.path.dirname(abspath) + '/resumePDFs')
     resumeFile = r'digestedResumes.json'
     resumes = getResumes()
     for resume in resumes:
-        if resume['Name'] == resumeName:
+        if resume['Name'] == resumeName: #if resume has name that matches input, remove it from the list
             resumes = [resume for resume in resumes if resume['Name'] != resumeName]
             content = json.dumps(resumes)
             with open(resumeFile, 'w') as f:
@@ -201,7 +210,6 @@ def findBestResume(description):
         pprint.pprint(res['Content'])
         scores.append({'Name':res['Name'],'Score':score})
     maximum = 0
-    print(scores)
     for elem in scores:
         if elem['Score'] > maximum:
             maximum = elem['Score']
