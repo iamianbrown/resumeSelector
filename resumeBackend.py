@@ -26,6 +26,8 @@ def stripSymbols(word):#remove symbols from ends of words
 #could use library that finds similar words
 
 def startup():
+    abspath = os.path.abspath(__file__)
+    os.chdir(os.path.dirname(abspath))
     pdfFolder = r'resumePDFs'
     if not os.path.exists(pdfFolder):
         os.mkdir(pdfFolder)
@@ -142,6 +144,7 @@ def addResume(resumePDF):
     copy(resumePDF, filename)
     #return to parent directory, where digestedResumes.json is stored
     os.chdir('/..')
+    print(os.getcwd())
     #write resume to file (if there exist no duplicates), returns False if resume is a duplicate
     resumeFile = r'digestedResumes.json'
     resumes = []

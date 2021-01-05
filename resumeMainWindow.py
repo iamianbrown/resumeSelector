@@ -118,18 +118,18 @@ class Ui_MainWindow(object):
         widget = QWidget()
         fileName, ok = QFileDialog.getOpenFileName(widget, 'Select a Resume', '','PDF Files (*.pdf)')
         if ok:
-            
-            print(os.getcwd())
             backend.addResume(fileName)
         return
 
     def ShowDelDialog(self):
         #change directory to the directory that this script is located in
         abspath = os.path.abspath(__file__)
-        os.chdir(os.path.dirname(abspath) + '/resumePDFs')
+        os.chdir(os.path.dirname(abspath))
         widget = QWidget()
-        print(os.getcwd())
-        fileName, ok = QFileDialog.getOpenFileName(widget, 'Select a Resume to Delete', '', 'PDF Files (*.pdf)') 
+        dialog = QFileDialog()
+        respath = abspath + '/resumePDFs'
+        dialog.setDirectory(respath)
+        fileName, ok = dialog.getOpenFileName(widget, 'Select a Resume to Delete', '', 'PDF Files (*.pdf)')
         if ok:
             resumeName = os.path.basename(fileName)
             os.chdir(os.path.dirname(abspath))
@@ -142,17 +142,6 @@ class Ui_MainWindow(object):
 
 
 
-def window():
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
-
-
-
-window()
 '''
 if __name__ == "__main__":
     import sys
