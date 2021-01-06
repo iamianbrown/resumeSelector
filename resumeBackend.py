@@ -182,6 +182,7 @@ def delResume(resumeName): #takes resume as name with .pdf extension
     #change directory to resumePDFs
     abspath = os.path.abspath(__file__)
     os.chdir(os.path.dirname(abspath) + '/resumePDFs')
+    print(os.getcwd())
     resumeFile = r'digestedResumes.json'
     resumes = getResumes()
     for resume in resumes:
