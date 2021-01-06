@@ -139,12 +139,10 @@ def addResume(resumePDF):
     #inside of [], ^<character> means not the following
     name = nameRegex.search(resumePDF)
     filename = name.group(1) + name.group(2)
-    #copy resume pdf to be stored in app
-    print(os.getcwd())
+    #store a copy of resumePDF in application files
     copy(resumePDF, filename)
     #return to parent directory, where digestedResumes.json is stored
-    os.chdir('/..')
-    print(os.getcwd())
+    os.chdir('..')
     #write resume to file (if there exist no duplicates), returns False if resume is a duplicate
     resumeFile = r'digestedResumes.json'
     resumes = []
@@ -182,7 +180,6 @@ def delResume(resumeName): #takes resume as name with .pdf extension
     #change directory to resumePDFs
     abspath = os.path.abspath(__file__)
     os.chdir(os.path.dirname(abspath) + '/resumePDFs')
-    print(os.getcwd())
     resumeFile = r'digestedResumes.json'
     resumes = getResumes()
     for resume in resumes:

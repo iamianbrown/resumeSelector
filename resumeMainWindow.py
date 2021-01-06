@@ -65,6 +65,7 @@ class Ui_MainWindow(object):
         self.Replace.setMinimumSize(QtCore.QSize(130, 52))
         self.Replace.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.Replace.setObjectName("Replace")
+        self.Replace.clicked.connect(self.ShowRepDialog) #link replace button to replaceResume
         self.horizontalLayout_2.addWidget(self.Replace)
         self.Remove = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
