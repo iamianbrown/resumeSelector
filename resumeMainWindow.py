@@ -46,7 +46,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.Add = QtWidgets.QPushButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.Add.sizePolicy().hasHeightForWidth())
@@ -56,19 +56,8 @@ class Ui_MainWindow(object):
         self.Add.setObjectName("Add")
         self.Add.clicked.connect(self.ShowAddDialog) #link add button to addResume
         self.horizontalLayout_2.addWidget(self.Add)
-        self.Replace = QtWidgets.QPushButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.Replace.sizePolicy().hasHeightForWidth())
-        self.Replace.setSizePolicy(sizePolicy)
-        self.Replace.setMinimumSize(QtCore.QSize(130, 52))
-        self.Replace.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.Replace.setObjectName("Replace")
-        self.Replace.clicked.connect(self.ShowRepDialog) #link replace button to replaceResume
-        self.horizontalLayout_2.addWidget(self.Replace)
         self.Remove = QtWidgets.QPushButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.Remove.sizePolicy().hasHeightForWidth())
@@ -109,17 +98,17 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "Resume Selector"))
         self.Resume.setText(_translate("MainWindow", "Resume"))
         self.Add.setText(_translate("MainWindow", "Add"))
-        self.Replace.setText(_translate("MainWindow", "Replace"))
         self.Remove.setText(_translate("MainWindow", "Remove"))
         self.Description.setText(_translate("MainWindow", "Description"))
         self.PasteJobDescription.setText(_translate("MainWindow", "Paste Job Description"))
-    
+
     def ShowAddDialog(self):
         os.chdir(home)
         widget = QWidget()
         fileName, ok = QFileDialog.getOpenFileName(widget, 'Select a Resume', '','PDF Files (*.pdf)')
         if ok:
-            backend.addResume(fileName)
+            if not backend.addResume(fileName): #if duplicate name exists, prompt replace dialog
+                self.ShowRepDialog()
         return
 
     def ShowDelDialog(self):
