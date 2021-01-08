@@ -110,9 +110,12 @@ class Ui_MainWindow(object):
             if not backend.addResume(fileName): #if duplicate name exists, prompt replace dialog
                 self.ShowRepDialog()
         return
+    
+    def ShowRepDialog(self):
+
 
     def ShowDelDialog(self):
-        #change directory to the directory that this script is located in
+        #change directory to the directory that this script is located in 
         abspath = os.path.abspath(__file__)
         os.chdir(os.path.dirname(abspath))
         widget = QWidget()
