@@ -10,7 +10,7 @@
 import sys, os
 from os.path import expanduser
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import (QWidget, QPushButton, QFileDialog, QApplication)
+from PyQt5.QtWidgets import (QWidget, QPushButton, QFileDialog, QApplication, QDialog)
 backend = __import__('resumeBackend')
 home = expanduser("~")
 os.chdir(home)
@@ -112,7 +112,9 @@ class Ui_MainWindow(object):
         return
     
     def ShowRepDialog(self):
-
+        dlg = repDialog2('hello')
+        if dlg.exec_():
+            print('yes')
 
     def ShowDelDialog(self):
         #change directory to the directory that this script is located in 
@@ -131,17 +133,72 @@ class Ui_MainWindow(object):
         return
 
         
+class repDialog2(QDialog):
+    def __init__(self, filename):
+        super(repDialog2, self).__init__()
+
+        self.resize(330, 177)
+        self.setWindowTitle("Overwrite Resume")
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
+        self.setSizePolicy(sizePolicy)
+        self.setMinimumSize(QtCore.QSize(330, 113))
+        self.setMaximumSize(QtCore.QSize(330, 113))
+        self.verticalLayout = QtWidgets.QVBoxLayout(self)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.label = QtWidgets.QLabel(self)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
+        self.label.setSizePolicy(sizePolicy)
+        self.label.setMaximumSize(QtCore.QSize(306, 32))
+        self.label.setWordWrap(True)
+        self.label.setObjectName("label")
+        self.verticalLayout.addWidget(self.label)
+        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem)
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem1)
+        self.buttonBox = QtWidgets.QDialogButtonBox(self)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.buttonBox.sizePolicy().hasHeightForWidth())
+        self.buttonBox.setSizePolicy(sizePolicy)
+        self.buttonBox.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.buttonBox.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Yes)
+        self.buttonBox.setCenterButtons(False)
+        self.buttonBox.setObjectName("buttonBox")
+        self.horizontalLayout.addWidget(self.buttonBox)
+        self.verticalLayout.addLayout(self.horizontalLayout)
+
+        self.retranslateUi(self, filename)
+        self.buttonBox.accepted.connect(self.accept)
+        self.buttonBox.rejected.connect(self.reject)
+        QtCore.QMetaObject.connectSlotsByName(self)
+
+    def retranslateUi(self, replaceDialog, filename):
+        _translate = QtCore.QCoreApplication.translate
+        replaceDialog.setWindowTitle(_translate("replaceDialog", "Overwrite Resume"))
+        self.label.setText(_translate("replaceDialog", "A resume with the name  '" + filename + "' already exists. Would you like to replace it?"))
 
 
 
 
-'''
+
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
-    ui.setupUi(MainWindow
+    ui.setupUi(MainWindow)
     MainWindow.show()
+    ui.ShowRepDialog()
     sys.exit(app.exec_())
-'''

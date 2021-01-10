@@ -9,9 +9,12 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QDialog
 
 
 class Ui_replaceDialog(object):
+    def __init__(self, replaceDialog, filename):
+        self.setupUi(replaceDialog, filename)
     def setupUi(self, replaceDialog, filename):
         replaceDialog.setObjectName("replaceDialog")
         replaceDialog.resize(330, 177)
@@ -66,11 +69,15 @@ class Ui_replaceDialog(object):
         self.label.setText(_translate("replaceDialog", "A resume with the name  '" + filename + "' already exists. Would you like to replace it?"))
 
 
+
+
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     replaceDialog = QtWidgets.QDialog()
-    ui = Ui_replaceDialog()
-    ui.setupUi(replaceDialog, 'poopoo')
+    ui = Ui_replaceDialog(replaceDialog, 'loop')
+    
     replaceDialog.show()
+
+    
     sys.exit(app.exec_())
