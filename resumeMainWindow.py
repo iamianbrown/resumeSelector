@@ -105,16 +105,17 @@ class Ui_MainWindow(object):
     def ShowAddDialog(self):
         os.chdir(home)
         widget = QWidget()
-        fileName, ok = QFileDialog.getOpenFileName(widget, 'Select a Resume', '','PDF Files (*.pdf)')
+        path, ok = QFileDialog.getOpenFileName(widget, 'Select a Resume', '','PDF Files (*.pdf)')
+        print(path)
         if ok:
-            if not backend.addResume(fileName): #if duplicate name exists, prompt replace dialog
-                self.ShowRepDialog()
-        return
+            if not backend.addResume(path): #if duplicate name exists, prompt replace dialog
+                self.ShowRepDialog(path)
     
-    def ShowRepDialog(self):
-        dlg = repDialog2('hello')
+    def ShowRepDialog(self, path):
+        name = os.path.basename(path)
+        dlg = repDialog2(name)
         if dlg.exec_():
-            print('yes')
+            backend.replaceResume(path, path)
 
     def ShowDelDialog(self):
         #change directory to the directory that this script is located in 
@@ -124,37 +125,36 @@ class Ui_MainWindow(object):
         dialog = QFileDialog()
         respath = abspath + '/resumePDFs'
         dialog.setDirectory(respath)
-        fileName, ok = dialog.getOpenFileName(widget, 'Select a Resume to Delete', '', 'PDF Files (*.pdf)')
+        path, ok = dialog.getOpenFileName(widget, 'Select a Resume to Delete', '', 'PDF Files (*.pdf)')
         if ok:
-            resumeName = os.path.basename(fileName)
             os.chdir(os.path.dirname(abspath))
-            print(resumeName)
-            backend.delResume(resumeName)
-        return
+            backend.delResume(path)
 
         
 class repDialog2(QDialog):
     def __init__(self, filename):
         super(repDialog2, self).__init__()
-
-        self.resize(330, 177)
+        x = 400
+        y = 115
+        self.resize(x, y)
         self.setWindowTitle("Overwrite Resume")
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
         self.setSizePolicy(sizePolicy)
-        self.setMinimumSize(QtCore.QSize(330, 113))
-        self.setMaximumSize(QtCore.QSize(330, 113))
+        self.setMinimumSize(QtCore.QSize(x, y))
+        self.setMaximumHeight(y)
         self.verticalLayout = QtWidgets.QVBoxLayout(self)
         self.verticalLayout.setObjectName("verticalLayout")
         self.label = QtWidgets.QLabel(self)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHorizontalPolicy(QtWidgets.QSizePolicy.MinimumExpanding) # allow label to expand to full dialog width
         sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
         self.label.setSizePolicy(sizePolicy)
-        self.label.setMaximumSize(QtCore.QSize(306, 32))
+        self.label.setMinimumWidth(306)
         self.label.setWordWrap(True)
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
@@ -192,7 +192,7 @@ class repDialog2(QDialog):
 
 
 
-
+'''
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
@@ -202,3 +202,4 @@ if __name__ == "__main__":
     MainWindow.show()
     ui.ShowRepDialog()
     sys.exit(app.exec_())
+'''

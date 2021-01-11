@@ -176,13 +176,17 @@ def getResumes():
     return resumes
 
 #deletes a resume with a given name, if it exists
-def delResume(resumeName): #takes resume as name with .pdf extension
+def delResume(resumePDF): #takes resume as file path with .pdf extension
     #change directory to resumePDFs
     abspath = os.path.abspath(__file__)
     os.chdir(os.path.dirname(abspath) + '/resumePDFs')
+    resumeName = os.path.basename(resumePDF)
+    print(os.getcwd)
+    print(resumeName)
     resumeFile = r'digestedResumes.json'
     resumes = getResumes()
     for resume in resumes:
+        print(resume['Name'])
         if resume['Name'] == resumeName: #if resume has name that matches input, remove it from the list
             resumes = [resume for resume in resumes if resume['Name'] != resumeName]
             content = json.dumps(resumes)
@@ -190,8 +194,7 @@ def delResume(resumeName): #takes resume as name with .pdf extension
                 f.write(content)
             os.remove(resume['Location'])
             return True  #returns true if resume was successfully deleted
-        else:
-            return False #returns false if there is no resume with matching name
+    return False #returns false if there is no resume with matching name
 
 #deletes resume with name resumeToDeleteName and replaces it with data from replacement (replacement is pdf)
 def replaceResume(resumeToDeleteName, replacement):
