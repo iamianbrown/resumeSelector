@@ -81,7 +81,7 @@ def digestResume(resumePDF): #resume is a pdf file (as str)
     words = newWords
     return words
 
-#get job description (input as plain text) word count
+#get job description (input as plain text) word count return type: word dictionary
 def digestDescription(text): 
     text = text.lower() #make search case insensitive
     textLst = text.split() #parse resume into list
@@ -181,12 +181,9 @@ def delResume(resumePDF): #takes resume as file path with .pdf extension
     abspath = os.path.abspath(__file__)
     os.chdir(os.path.dirname(abspath) + '/resumePDFs')
     resumeName = os.path.basename(resumePDF)
-    print(os.getcwd)
-    print(resumeName)
     resumeFile = r'digestedResumes.json'
     resumes = getResumes()
     for resume in resumes:
-        print(resume['Name'])
         if resume['Name'] == resumeName: #if resume has name that matches input, remove it from the list
             resumes = [resume for resume in resumes if resume['Name'] != resumeName]
             content = json.dumps(resumes)
@@ -221,6 +218,3 @@ def findBestResume(description):
     for res in resumes:
         if res['Name'] == bestResume:
             return res['Location']
-
-
-
