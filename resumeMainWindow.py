@@ -134,6 +134,40 @@ class Ui_MainWindow(object):
         print(backend.findBestResume(text))
 
 
+class dispDialog(QDialog):
+    def __init__(self, filename):
+        super(dispDialog, self).__init__()
+        x = 400
+        y = 115
+        self.resize(x, y)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
+        self.setSizePolicy(sizePolicy)
+        self.setMinimumSize(QtCore.QSize(x, y))
+        self.setMaximumHeight(y)
+        self.verticalLayout = QtWidgets.QVBoxLayout(self)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.label = QtWidgets.QLabel(self)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHorizontalPolicy(QtWidgets.QSizePolicy.MinimumExpanding) # allow label to expand to full dialog width
+        sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
+        self.label.setSizePolicy(sizePolicy)
+        self.label.setMinimumWidth(306)
+        self.label.setWordWrap(True)
+        self.label.setObjectName("label")
+        self.verticalLayout.addWidget(self.label)
+        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem)
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem1)
+
+        #add connection to push button and push button
         
 class repDialog2(QDialog):
     def __init__(self, filename):
@@ -183,14 +217,14 @@ class repDialog2(QDialog):
         self.horizontalLayout.addWidget(self.buttonBox)
         self.verticalLayout.addLayout(self.horizontalLayout)
 
-        self.retranslateUi(self, filename)
+        self.retranslateUi(filename)
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
         QtCore.QMetaObject.connectSlotsByName(self)
 
-    def retranslateUi(self, replaceDialog, filename):
+    def retranslateUi(self, filename):
         _translate = QtCore.QCoreApplication.translate
-        replaceDialog.setWindowTitle(_translate("replaceDialog", "Overwrite Resume"))
+        self.setWindowTitle(_translate("replaceDialog", "Overwrite Resume"))
         self.label.setText(_translate("replaceDialog", "A resume with the name  '" + filename + "' already exists. Would you like to replace it?"))
 
 
