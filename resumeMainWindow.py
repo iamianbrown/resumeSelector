@@ -131,32 +131,23 @@ class Ui_MainWindow(object):
     
     def pasteDescription(self):
         text = pyperclip.paste() #get job description text
-        print(backend.findBestResume(text))
+        bestResume = backend.findBestResume(text)
+        dialog = outputDialog(bestResume)
+        dialog.exec_()
 
-
-class dispDialog(QDialog):
+class outputDialog(QDialog):
     def __init__(self, filename):
-        super(dispDialog, self).__init__()
-        x = 400
-        y = 115
-        self.resize(x, y)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
-        self.setSizePolicy(sizePolicy)
-        self.setMinimumSize(QtCore.QSize(x, y))
-        self.setMaximumHeight(y)
+        super(outputDialog, self).__init__()
+        self.resize(400, 100)
+        self.setMinimumSize(QtCore.QSize(350, 100))
+        self.setMaximumSize(QtCore.QSize(16777215, 100))
         self.verticalLayout = QtWidgets.QVBoxLayout(self)
+        self.verticalLayout.setContentsMargins(-1, -1, 6, 6)
         self.verticalLayout.setObjectName("verticalLayout")
         self.label = QtWidgets.QLabel(self)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHorizontalPolicy(QtWidgets.QSizePolicy.MinimumExpanding) # allow label to expand to full dialog width
-        sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
-        self.label.setSizePolicy(sizePolicy)
-        self.label.setMinimumWidth(306)
+        self.label.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.label.setScaledContents(True)
+        self.label.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.label.setWordWrap(True)
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
@@ -166,9 +157,27 @@ class dispDialog(QDialog):
         self.horizontalLayout.setObjectName("horizontalLayout")
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
+        self.pushButton = QtWidgets.QPushButton(self)
+        self.pushButton.setEnabled(True)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.pushButton.sizePolicy().hasHeightForWidth())
+        self.pushButton.setSizePolicy(sizePolicy)
+        self.pushButton.setMaximumSize(QtCore.QSize(130, 16777215))
+        self.pushButton.setObjectName("pushButton")
+        self.horizontalLayout.addWidget(self.pushButton)
+        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.OK.clicked.connect(self.close)
+        self.retranslateUi(filename)
+        QtCore.QMetaObject.connectSlotsByName(self)
 
-        #add connection to push button and push button
-        
+    def retranslateUi(self, filename):
+        _translate = QtCore.QCoreApplication.translate
+        self.setWindowTitle(_translate("Dialog", "Result"))
+        self.label.setText(_translate("Dialog", "Use " + os.path.basename(filename) + " for this application."))
+        self.pushButton.setText(_translate("Dialog", "OK"))
+
 class repDialog2(QDialog):
     def __init__(self, filename):
         super(repDialog2, self).__init__()

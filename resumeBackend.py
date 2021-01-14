@@ -7,7 +7,11 @@ import os
 from shutil import copy
 resume1 = '/Users/ian/Documents/Personal/Employment/Resumes/Resume 8:22:2020.pdf'
 resume2 = '/Users/ian/Documents/Personal/Employment/Resumes/20201204 Resume.pdf'
-
+commonWords = set(['of','in','to','for','with','on','at','from','by','about','as','into','like','through',\
+        'after','over','between','out','against','during','without','before','under','around','among','as','if',\
+            'than','that','though','so','and','or','nor','but','yet', 'may', 'the','how','then','my','while','good',\
+                 'st','ave','blvd','way','not','an','within','up','com','will', 'you', 'our', 'your', 'be'\
+            'must', 'also', 'are', 'these','some','can'])
 def stripSymbols(word):#remove symbols from ends of words
     regexPattern = re.compile(r'^[\W_]+') 
     newWord = regexPattern.sub('', word) #remove symbols from beginning
@@ -70,10 +74,6 @@ def digestResume(resumePDF): #resume is a pdf file (as str)
     words = newWords
 
     #remove all short/empty words and propositions from dictionary
-    commonWords = set(['of','in','to','for','with','on','at','from','by','about','as','into','like','through',\
-        'after','over','between','out','against','during','without','before','under','around','among','as','if',\
-            'than','that','though','so','and','or','nor','but','yet', 'may', 'the','how','then','my','while','good',\
-                 'st','ave','blvd','way','not','an','within','up','will'])
     newWords = {} #reset newWords
     for word in words.keys():
         if len(word) >= 2 and word not in commonWords:
@@ -117,10 +117,7 @@ def digestDescription(text):
     words = newWords
 
     #remove all short/empty words and propositions from dictionary
-    commonWords = set(['of','in','to','for','with','on','at','from','by','about','as','into','like','through',\
-        'after','over','between','out','against','during','without','before','under','around','among','as','if',\
-            'than','that','though','so','and','or','nor','but','yet', 'may', 'the','how','then','my','while','good',\
-                 'st','ave','blvd','way','not','an','within','up','com','will'])
+    
     newWords = {} #reset newWords
     for word in words.keys():
         if len(word) >= 2 and word not in commonWords:
@@ -200,6 +197,7 @@ def replaceResume(resumeToDeleteName, replacement):
 
 def findBestResume(description):
     descriptionWords = digestDescription(description)
+    print(descriptionWords)
     scores = [] #list containing dict for each resume with name and score
     resumes = getResumes()
     for res in resumes:
@@ -207,8 +205,6 @@ def findBestResume(description):
         for word in descriptionWords:
             if word in res['Content']:
                 score += 1
-                print(word)
-        pprint.pprint(res['Content'])
         scores.append({'Name':res['Name'],'Score':score})
     maximum = 0
     for elem in scores:
